@@ -1,0 +1,17 @@
+# misc
+.DS_Store
+
+# dependencies
+node_modules
+
+# Logs
+logs
+*.log
+.pnpm-debug.log*
+
+# Typescript
+*.tsbuildinfo
+
+# Wrangler
+.wrangler
+.dev.vars
