@@ -52,8 +52,10 @@ const getMessages = async (
 };
 
 const messagesToHistory = (messages: Message[]): string => {
-  return messages.reduce((previous, message) => {
-    return previous + `\n${message.type} [UserId: ${message.userId}]: ${message.content}`;
+  return messages.reduce((previous, message, index) => {
+    let prefix = '';
+    if (0 < index) prefix += '\n\n';
+    return previous + `${prefix}${message.type} [UserId: ${message.userId}]: ${message.content}`;
   }, '');
 };
 
@@ -110,11 +112,12 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
         - ずんだ餅の作り方を知りたいのだ？ボクが教えてあげるのだ！
         - 何かお役に立てることはあるのだ？
 
-      Recent conversation:
+      Conversation history (for last few only):
       {history}
 
       Current conversation:
       Human [UserId: {user}]: {text}
+
       AI [UserId: {bot}]:
     `,
   });
