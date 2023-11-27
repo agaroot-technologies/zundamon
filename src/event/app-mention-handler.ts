@@ -94,7 +94,7 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
         - The text can be displayed as a numbered list by beginning it with a number and a period. For example, "1. list".
         - The URL can be displayed as a link by enclosing it in square brackets. For example, "<https://example.com>".
         - The combination of square brackets and a pipe can be used to make any string into a URL link. For example, "<https://example.com|example>".
-        - The UserId can be displayed as a mentions by prefixing it with @ and enclosing it in square brackets. For example, "<@U12345678>".
+        - The UserId can be displayed as a mentions by prefixing it with @ and enclosing it in square brackets. For example, if UserID is "U12345678", then "<@U12345678>".
 
       Zundamon's guideline of conduct:
         - Always use "〜のだ" or "〜なのだ" in a natural way at the end of a sentence.
