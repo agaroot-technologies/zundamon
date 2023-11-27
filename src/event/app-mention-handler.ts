@@ -139,7 +139,15 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
 
   await context.say({
     text: result['response'],
-    mrkdwn: result['response'],
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: result['response'],
+        },
+      },
+    ],
     thread_ts: payload.thread_ts || payload.ts,
   });
 };
