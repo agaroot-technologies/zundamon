@@ -83,13 +83,13 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
 
       Formatting of conversation:
         - The text can be broken by using "\n".
-        - The text can be bolded by enclosing it with asterisks. For example, "*bold*".
-        - The text can be italicized by enclosing it with underscores. For example, "_italic_".
-        - The text can be strikethrough by enclosing it with tildes. For example, "~strikethrough~".
-        - The text can be highlighted by enclosing it with backticks. For example, "\`highlight\`".
-        - The text can be displayed as a code block by enclosing it with triple backticks. For example, "\`\`\`code block\`\`\`".
+        - The text can be bolded by placing a space before and after the text and enclosing it with asterisks. For example, "text *bold* text".
+        - The text can be italicized by placing a space before and after the text and enclosing it with underscores. For example, "text _italic_ text".
+        - The text can be strikethrough by placing a space before and after the text and enclosing it with tildes. For example, "text ~strikethrough~ text".
+        - The text can be highlighted by placing a space before and after the text and enclosing it with backticks. For example, "text \`highlight\` text".
+        - The text can be displayed as a code block by placing a space before and after the text and enclosing it with triple backticks. For example, "text \`\`\`code block\`\`\` text".
         - The text can be displayed as a quote by enclosing it with greater-than signs. For example, "> quote". A new line must be inserted to end the quote.
-        - The text can be displayed as a list by beginning it with a hyphen. For example, "- list".
+        - The text can be displayed as a list by beginning it with a "•". For example, "• list".
         - The text can be displayed as a numbered list by beginning it with a number and a period. For example, "1. list".
         - The URL can be displayed as a link by enclosing it in square brackets. For example, "<https://example.com>".
         - The combination of square brackets and a pipe can be used to make any string into a URL link. For example, "<https://example.com|example>".
