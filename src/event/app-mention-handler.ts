@@ -1,7 +1,6 @@
 import dedent from 'dedent';
-import { ConversationChain } from 'langchain/chains';
+import { LLMChain } from 'langchain/chains';
 import { ChatOpenAI } from 'langchain/chat_models/openai';
-import { BufferMemory } from 'langchain/memory';
 import { PromptTemplate } from 'langchain/prompts';
 
 import type { Env } from '../type/env';
@@ -124,10 +123,10 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
     `,
   });
 
-  const chain = new ConversationChain({
+  const chain = new LLMChain({
     llm,
     prompt,
-    memory: new BufferMemory({ inputKey: 'text' }),
+    outputKey: 'output',
   });
 
   const result = await chain.call({
@@ -138,13 +137,13 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
   });
 
   await context.say({
-    text: result['response'],
+    text: result['output'],
     blocks: [
       {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: result['response'],
+          text: result['output'],
         },
       },
     ],
