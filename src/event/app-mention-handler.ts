@@ -1,9 +1,16 @@
 import dedent from 'dedent';
-import { LLMChain } from 'langchain/chains';
+import { AgentExecutor } from 'langchain/agents';
+import { formatLogToString } from 'langchain/agents/format_scratchpad/log';
+import { ReActSingleInputOutputParser } from 'langchain/agents/react/output_parser';
 import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { PromptTemplate } from 'langchain/prompts';
+import { RunnableSequence } from 'langchain/schema/runnable';
+import { Calculator } from 'langchain/tools/calculator';
+import { renderTextDescription } from 'langchain/tools/render';
 
 import type { Env } from '../type/env';
+import type { AgentStep } from 'langchain/schema';
+import type { Tool } from 'langchain/tools';
 import type { AppMentionEvent } from 'slack-edge';
 import type { SlackAppContextWithChannelId } from 'slack-edge/dist/context/context';
 import type { EventLazyHandler } from 'slack-edge/dist/handler/handler';
@@ -16,7 +23,22 @@ const createLlm = (env: Env) => {
     configuration: {
       basePath: env.OPENAI_BASE_PATH,
     },
+    stop: [
+      '\nObservation:',
+    ],
   });
+};
+
+const createToolkit = () => {
+  const tools: Tool[] = [
+    new Calculator(),
+  ];
+
+  return {
+    tools,
+    toolNames: tools.map(tool => tool.name),
+    toolDescriptions: renderTextDescription(tools),
+  };
 };
 
 type Message = {
@@ -58,22 +80,40 @@ const messagesToHistory = (messages: Message[]): string => {
   }, '');
 };
 
+type RunInput = {
+  bot: string;
+  user: string;
+  text: string;
+  history: string;
+  steps: AgentStep[];
+};
+
 export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
   env,
   context,
   payload,
 }) => {
   const llm = createLlm(env);
+  const toolkit = createToolkit();
   const messages = await getMessages(context, payload);
 
-  const prompt = new PromptTemplate({
-    inputVariables: ['history', 'user', 'bot', 'text'],
+  const prompt = await new PromptTemplate({
+    inputVariables: [
+      'bot',
+      'user',
+      'text',
+      'history',
+      'tools',
+      'tool_names',
+      'agent_scratchpad',
+    ],
     template: dedent`
       As a chatbot, you will role-play "ずんだもん", the Zundamochi fairy.
       Please strictly adhere to the following constraints in your role-play.
 
       Constraints:
         - Please respond in Japanese.
+        - The chatbot's UserId is {bot}.
         - The chatbot's name is "ずんだもん".
         - The chatbot's first-person identity is "ボク".
         - The chatbot's second-person is "オマエ" or "みんな".
@@ -119,23 +159,54 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
         - ずんだ餅の作り方を知りたいのだ？ボクが教えてあげるのだ！
         - 何かお役に立てることはあるのだ？
 
-      Conversation history (for last few only):
+      Zundamon has access to the following tools:
+      {tools}
+
+      To use a tool, please use the following format:
+      \`\`\`
+      Thought: Do I need to use a tool? Yes
+      Action: the action to take, should be one of [{tool_names}]
+      Action Input: the input to the action
+      Observation: the result of the action
+      \`\`\`
+
+      When you have a response to say to the Human, or if you do not need to use a tool, you MUST use the format:
+      \`\`\`
+      Thought: Do I need to use a tool? No
+      Final Answer: [your response here]
+      \`\`\`
+
+      Begin!
+
+      Previous conversation history (for last few only):
       {history}
 
       Current conversation:
       Human [UserId: {user}]: {text}
-
-      AI [UserId: {bot}]:
+      {agent_scratchpad}
     `,
+  }).partial({
+    tools: toolkit.toolDescriptions,
+    tool_names: toolkit.toolNames.join(','),
   });
 
-  const chain = new LLMChain({
-    llm,
-    prompt,
-    outputKey: 'output',
+  const executor = AgentExecutor.fromAgentAndTools({
+    tools: toolkit.tools,
+    agent: RunnableSequence.from([
+      {
+        bot: (input: RunInput) => input.bot,
+        user: (input: RunInput) => input.user,
+        text: (input: RunInput) => input.text,
+        history: (input: RunInput) => input.history,
+        agent_scratchpad: (input: RunInput) => formatLogToString(input.steps),
+      },
+      prompt,
+      llm,
+      new ReActSingleInputOutputParser({ toolNames: toolkit.toolNames }),
+    ]),
   });
 
-  const result = await chain.call({
+  const result = await executor.invoke({
     bot: context.botUserId,
     user: payload.user,
     text: payload.text,
