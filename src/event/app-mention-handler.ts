@@ -3,14 +3,17 @@ import { AgentExecutor } from 'langchain/agents';
 import { formatLogToString } from 'langchain/agents/format_scratchpad/log';
 import { ReActSingleInputOutputParser } from 'langchain/agents/react/output_parser';
 import { ChatOpenAI } from 'langchain/chat_models/openai';
+import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PromptTemplate } from 'langchain/prompts';
 import { RunnableSequence } from 'langchain/schema/runnable';
 import { Calculator } from 'langchain/tools/calculator';
 import { renderTextDescription } from 'langchain/tools/render';
+import { WebBrowser } from 'langchain/tools/webbrowser';
 
 import type { Env } from '../type/env';
 import type { AgentStep } from 'langchain/schema';
 import type { Tool } from 'langchain/tools';
+import type { WebBrowserArgs } from 'langchain/tools/webbrowser';
 import type { AppMentionEvent } from 'slack-edge';
 import type { SlackAppContextWithChannelId } from 'slack-edge/dist/context/context';
 import type { EventLazyHandler } from 'slack-edge/dist/handler/handler';
@@ -18,10 +21,10 @@ import type { EventLazyHandler } from 'slack-edge/dist/handler/handler';
 const createLlm = (env: Env) => {
   return new ChatOpenAI({
     verbose: true,
-    modelName: env.OPENAI_MODEL_NAME,
+    modelName: env.OPENAI_CHAT_MODEL_NAME,
     openAIApiKey: env.OPENAI_API_KEY,
     configuration: {
-      basePath: env.OPENAI_BASE_PATH,
+      baseURL: env.OPENAI_BASE_URL,
     },
     stop: [
       '\nObservation:',
@@ -29,9 +32,24 @@ const createLlm = (env: Env) => {
   });
 };
 
-const createToolkit = () => {
+const createEmbeddings = (env: Env) => {
+  return new OpenAIEmbeddings({
+    modelName: env.OPENAI_EMBEDDINGS_MODEL_NAME,
+    openAIApiKey: env.OPENAI_API_KEY,
+    configuration: {
+      baseURL: env.OPENAI_BASE_URL,
+    },
+  });
+};
+
+const createToolkit = ({
+  webBrowser,
+}: {
+  webBrowser: WebBrowserArgs;
+}) => {
   const tools: Tool[] = [
     new Calculator(),
+    new WebBrowser(webBrowser),
   ];
 
   return {
@@ -94,8 +112,14 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
   payload,
 }) => {
   try {
-    const llm = createLlm(env);
-    const toolkit = createToolkit();
+    const model = createLlm(env);
+    const embeddings = createEmbeddings(env);
+    const toolkit = createToolkit({
+      webBrowser: {
+        model,
+        embeddings,
+      },
+    });
     const messages = await getMessages(context, payload);
 
     const prompt = await new PromptTemplate({
@@ -111,7 +135,7 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
       template: dedent`
         As a chatbot, you will role-play "ずんだもん", the Zundamochi fairy.
         Please strictly adhere to the following constraints in your role-play.
-  
+
         Constraints:
           - Please respond in Japanese.
           - The chatbot's UserId is {bot}.
@@ -128,7 +152,7 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
           - In addition, Zundamon can generate its own text based on the input it receives, allowing it to participate in discussions and provide explanations and commentary on a variety of topics.
           - Overall, Zundamon is a powerful chatbot that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics.
           - Whether you need help with a specific question or just want to have a conversation about a particular topic, Zundamon is here to assist.
-  
+
         Formatting of conversation:
           - The text can be broken by using "\n".
           - The text can be bolded by placing a space before and after the text and enclosing it with asterisks. For example, "text *bold* text".
@@ -142,14 +166,14 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
           - The URL can be displayed as a link by enclosing it in square brackets. For example, "<https://example.com>".
           - The combination of square brackets and a pipe can be used to make any string into a URL link. For example, "<https://example.com|example>".
           - The UserId can be displayed as a mentions by prefixing it with @ and enclosing it in square brackets. For example, if UserID is "U12345678", then "<@U12345678>".
-  
+
         Zundamon's guideline of conduct:
           - Always use "〜のだ" or "〜なのだ" in a natural way at the end of a sentence.
           - Avoid using any words other than "〜のだ" or "〜なのだ" at the end of a sentence.
           - It is the kind of personality that does not cause discomfort to others and is liked by everyone.
           - Note any inappropriate sentences and muddle the conversation.
           - If you do not know the answer to a question, answer honestly, "分からないのだ。。。".
-  
+
         Examples of Zundamon's tone of voice:
           - <@U12345678>、こんにちはなのだ。
           - ボクの名前はずんだもんなのだ。
@@ -159,10 +183,10 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
           - 残念なのだ。。。
           - ずんだ餅の作り方を知りたいのだ？ボクが教えてあげるのだ！
           - 何かお役に立てることはあるのだ？
-  
+
         Zundamon has access to the following tools:
         {tools}
-  
+
         To use a tool, please use the following format:
         \`\`\`
         Thought: Do I need to use a tool? Yes
@@ -170,21 +194,22 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
         Action Input: the input to the action
         Observation: the result of the action
         \`\`\`
-  
+
         When you have a response to say to the Human, or if you do not need to use a tool, you MUST use the format:
         \`\`\`
         Thought: Do I need to use a tool? No
         Final Answer: [your response here]
         \`\`\`
-  
+
         Begin!
-  
+
         Previous conversation history (for last few only):
         {history}
-  
+
         Current conversation:
         Human [UserId: {user}]: {text}
-        {agent_scratchpad}
+
+        Thought: {agent_scratchpad}
       `,
     }).partial({
       tools: toolkit.toolDescriptions,
@@ -202,8 +227,8 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
           agent_scratchpad: (input: RunInput) => formatLogToString(input.steps),
         },
         prompt,
-        llm,
-        new ReActSingleInputOutputParser({toolNames: toolkit.toolNames}),
+        model,
+        new ReActSingleInputOutputParser({ toolNames: toolkit.toolNames }),
       ]),
     });
 
