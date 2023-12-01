@@ -12,7 +12,7 @@
     "axios": "1.6.2",
     "cheerio": "1.0.0-rc.12",
     "dedent": "1.5.1",
-    "langchain": "0.0.197-rc.1",
+    "langchain": "0.0.198",
     "slack-edge": "0.8.2",
     "slack-web-api-client": "0.7.3"
   },
