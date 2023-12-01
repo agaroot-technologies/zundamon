@@ -11,9 +11,10 @@ import { renderTextDescription } from 'langchain/tools/render';
 import { WebBrowser } from 'langchain/tools/webbrowser';
 
 import type { Env } from '../type/env';
+import type { BaseLanguageModel } from 'langchain/base_language';
+import type { Embeddings } from 'langchain/embeddings/base';
 import type { AgentStep } from 'langchain/schema';
 import type { Tool } from 'langchain/tools';
-import type { WebBrowserArgs } from 'langchain/tools/webbrowser';
 import type { AppMentionEvent } from 'slack-edge';
 import type { SlackAppContextWithChannelId } from 'slack-edge/dist/context/context';
 import type { EventLazyHandler } from 'slack-edge/dist/handler/handler';
@@ -43,13 +44,26 @@ const createEmbeddings = (env: Env) => {
 };
 
 const createToolkit = ({
-  webBrowser,
+  model,
+  embeddings,
 }: {
-  webBrowser: WebBrowserArgs;
+  model: BaseLanguageModel;
+  embeddings: Embeddings;
 }) => {
+  const webBrowser = new WebBrowser({
+    model,
+    embeddings,
+    // Avoid using credentials because CloudflareWorkers does not support the credentials field.
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    axiosConfig: {
+      withCredentials: undefined,
+    },
+  });
+
   const tools: Tool[] = [
     new Calculator(),
-    new WebBrowser(webBrowser),
+    webBrowser,
   ];
 
   return {
@@ -115,10 +129,8 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
     const model = createLlm(env);
     const embeddings = createEmbeddings(env);
     const toolkit = createToolkit({
-      webBrowser: {
-        model,
-        embeddings,
-      },
+      model,
+      embeddings,
     });
     const messages = await getMessages(context, payload);
 
