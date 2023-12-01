@@ -97,6 +97,7 @@ export const createToolkit = ({
       withCredentials: undefined,
     },
   });
+  webBrowser.description = 'useful for when you need to find something on or summarize a webpage. input should be a comma separated list of "ONE valid http URL starting with the protocol","what you want to find on the page or empty string for a summary".';
 
   const tools: Tool[] = [
     new Calculator(),
