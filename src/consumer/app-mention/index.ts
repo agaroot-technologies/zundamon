@@ -2,115 +2,14 @@ import dedent from 'dedent';
 import { AgentExecutor } from 'langchain/agents';
 import { formatLogToString } from 'langchain/agents/format_scratchpad/log';
 import { ReActSingleInputOutputParser } from 'langchain/agents/react/output_parser';
-import { ChatOpenAI } from 'langchain/chat_models/openai';
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PromptTemplate } from 'langchain/prompts';
 import { RunnableSequence } from 'langchain/schema/runnable';
-import { Calculator } from 'langchain/tools/calculator';
-import { renderTextDescription } from 'langchain/tools/render';
-import { WebBrowser } from 'langchain/tools/webbrowser';
 
-import type { Env } from '../type/env';
-import type { BaseLanguageModel } from 'langchain/base_language';
-import type { Embeddings } from 'langchain/embeddings/base';
+import { createEmbeddings, createLlm, createSlackClient, createToolkit, getReplies, repliesToHistory } from './helper';
+
+import type { AppMentionEvent } from './event';
+import type { Env } from '../../type/env';
 import type { AgentStep } from 'langchain/schema';
-import type { Tool } from 'langchain/tools';
-import type { AppMentionEvent } from 'slack-edge';
-import type { SlackAppContextWithChannelId } from 'slack-edge/dist/context/context';
-import type { EventLazyHandler } from 'slack-edge/dist/handler/handler';
-
-const createLlm = (env: Env) => {
-  return new ChatOpenAI({
-    verbose: true,
-    modelName: env.OPENAI_CHAT_MODEL_NAME,
-    openAIApiKey: env.OPENAI_API_KEY,
-    configuration: {
-      baseURL: env.OPENAI_BASE_URL,
-    },
-    stop: [
-      '\nObservation:',
-    ],
-  });
-};
-
-const createEmbeddings = (env: Env) => {
-  return new OpenAIEmbeddings({
-    modelName: env.OPENAI_EMBEDDINGS_MODEL_NAME,
-    openAIApiKey: env.OPENAI_API_KEY,
-    configuration: {
-      baseURL: env.OPENAI_BASE_URL,
-    },
-  });
-};
-
-const createToolkit = ({
-  model,
-  embeddings,
-}: {
-  model: BaseLanguageModel;
-  embeddings: Embeddings;
-}) => {
-  const webBrowser = new WebBrowser({
-    model,
-    embeddings,
-    // Avoid using credentials because CloudflareWorkers does not support the credentials field.
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    axiosConfig: {
-      withCredentials: undefined,
-    },
-  });
-
-  const tools: Tool[] = [
-    new Calculator(),
-    webBrowser,
-  ];
-
-  return {
-    tools,
-    toolNames: tools.map(tool => tool.name),
-    toolDescriptions: renderTextDescription(tools),
-  };
-};
-
-type Message = {
-  type: 'AI' | 'Human';
-  userId: string;
-  content: string;
-};
-
-const getMessages = async (
-  context: SlackAppContextWithChannelId,
-  payload: AppMentionEvent,
-): Promise<Message[]> => {
-  const replies = await context.client.conversations.replies({
-    channel: context.channelId,
-    ts: payload.thread_ts || payload.ts,
-    latest: payload.ts,
-  });
-
-  if (!replies.messages) {
-    return [];
-  }
-
-  return replies.messages
-    .filter(message => message.ts !== payload.ts)
-    .map(message => {
-      return {
-        type: message.user === context.botUserId ? 'AI' : 'Human',
-        userId: message.user ?? '',
-        content: message.text ?? '',
-      };
-    });
-};
-
-const messagesToHistory = (messages: Message[]): string => {
-  return messages.reduce((previous, message, index) => {
-    let prefix = '';
-    if (0 < index) prefix += '\n\n';
-    return previous + `${prefix}${message.type} [UserId: ${message.userId}]: ${message.content}`;
-  }, '');
-};
 
 type RunInput = {
   bot: string;
@@ -120,11 +19,13 @@ type RunInput = {
   steps: AgentStep[];
 };
 
-export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
-  env,
-  context,
-  payload,
-}) => {
+export const appMentionEventHandler = async (
+  env: Env,
+  message: Message<AppMentionEvent>,
+) => {
+  const slackClient = createSlackClient(env);
+  const replies = await getReplies(slackClient, message.body);
+
   try {
     const model = createLlm(env);
     const embeddings = createEmbeddings(env);
@@ -132,7 +33,6 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
       model,
       embeddings,
     });
-    const messages = await getMessages(context, payload);
 
     const prompt = await new PromptTemplate({
       inputVariables: [
@@ -245,13 +145,15 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
     });
 
     const result = await executor.invoke({
-      bot: context.botUserId,
-      user: payload.user,
-      text: payload.text,
-      history: messagesToHistory(messages.slice(-5)),
+      bot: message.body.context.bot,
+      user: message.body.payload.user,
+      text: message.body.payload.text,
+      history: repliesToHistory(replies.slice(-5)),
     });
 
-    await context.say({
+    await slackClient.chat.update({
+      channel: message.body.context.channel,
+      ts: message.body.context.ts,
       text: result['output'],
       blocks: [
         {
@@ -262,12 +164,17 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
           },
         },
       ],
-      thread_ts: payload.thread_ts || payload.ts,
     });
-  } catch {
-    await context.say({
+
+    message.ack();
+  } catch (error) {
+    await slackClient.chat.update({
+      channel: message.body.context.channel,
+      ts: message.body.context.ts,
       text: 'エラーが発生したっぽいのだ。。。',
-      thread_ts: payload.thread_ts || payload.ts,
     });
+
+    message.retry();
+    throw error;
   }
 };

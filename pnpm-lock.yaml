@@ -26,6 +26,9 @@ dependencies:
   slack-web-api-client:
     specifier: 0.7.3
     version: 0.7.3
+  valibot:
+    specifier: 0.21.0
+    version: 0.21.0
 
 devDependencies:
   '@agaroot/eslint-config-common':
@@ -3530,6 +3533,10 @@ packages:
   /uuid@9.0.1:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
     hasBin: true
+    dev: false
+
+  /valibot@0.21.0:
+    resolution: {integrity: sha512-XnzpX93b1vQL7CB3fHlhpLg7OutYpc3ke8SKOvp7IXgicRfTdP/w8+bf0DjhVsySq6YdF4Opld05mj6bTobo9g==}
     dev: false
 
   /validate-npm-package-license@3.0.4:

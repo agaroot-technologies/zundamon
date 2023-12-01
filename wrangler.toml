@@ -1,3 +1,12 @@
 name = "zundamon"
 main = "src/index.ts"
 compatibility_date = "2023-11-24"
+
+[[queues.producers]]
+queue = "zundamon"
+binding = "QUEUE"
+
+[[queues.consumers]]
+queue = "zundamon"
+max_batch_size = 1
+max_retries = 3

@@ -1,8 +1,10 @@
 import { SlackApp } from 'slack-edge';
 
-import { appMentionHandler } from './event/app-mention-handler';
+import { appMentionEventHandler } from './consumer/app-mention';
+import { appMentionHandler } from './event/app-mention';
 
 import type { Env } from './type/env';
+import type { QueueMessageBody } from './type/queue-message-body';
 
 export default {
   async fetch(
@@ -15,5 +17,18 @@ export default {
     app.event('app_mention', appMentionHandler);
 
     return await app.run(request, context);
+  },
+  async queue(
+    batch: MessageBatch<QueueMessageBody>,
+    env: Env,
+  ): Promise<void> {
+    await Promise.all(batch.messages.map(async (message) => {
+      switch (message.body.type) {
+        case 'app-mention': {
+          await appMentionEventHandler(env, message);
+          break;
+        }
+      }
+    }));
   },
 };
