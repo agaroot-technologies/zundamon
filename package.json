@@ -9,12 +9,13 @@
     }
   },
   "dependencies": {
-    "axios": "1.6.2",
+    "@langchain/core": "0.0.7",
     "cheerio": "1.0.0-rc.12",
     "dedent": "1.5.1",
     "langchain": "0.0.198",
     "slack-edge": "0.8.2",
     "slack-web-api-client": "0.7.3",
+    "url-regex-safe": "4.0.0",
     "valibot": "0.21.0"
   },
   "devDependencies": {
@@ -22,6 +23,7 @@
     "@agaroot/eslint-config-jest": "2.1.1",
     "@cloudflare/workers-types": "4.20231121.0",
     "@tsconfig/strictest": "2.0.2",
+    "@types/url-regex-safe": "1.0.2",
     "@typescript-eslint/eslint-plugin": "6.11.0",
     "@typescript-eslint/parser": "6.11.0",
     "eslint": "8.54.0",
