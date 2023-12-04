@@ -19,10 +19,12 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
     type: 'app-mention',
     context: {
       channel: context.channelId,
-      ts: response.message?.ts,
+      threadTs: payload.thread_ts || payload.ts,
+      replyTs: response.message?.ts,
       bot: context.botUserId,
     },
     payload: {
+      ts: payload.ts,
       user: payload.user,
       text: payload.text,
     },

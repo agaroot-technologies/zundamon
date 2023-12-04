@@ -153,7 +153,7 @@ export const appMentionEventHandler = async (
 
     await slackClient.chat.update({
       channel: message.body.context.channel,
-      ts: message.body.context.ts,
+      ts: message.body.context.replyTs,
       text: result['output'],
       blocks: [
         {
@@ -170,7 +170,7 @@ export const appMentionEventHandler = async (
   } catch (error) {
     await slackClient.chat.update({
       channel: message.body.context.channel,
-      ts: message.body.context.ts,
+      ts: message.body.context.replyTs,
       text: 'エラーが発生したっぽいのだ。。。',
     });
 

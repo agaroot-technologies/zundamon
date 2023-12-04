@@ -6,10 +6,12 @@ export const AppMentionEventSchema = object({
   type: literal('app-mention'),
   context: object({
     channel: string(),
-    ts: string(),
+    threadTs: string(),
+    replyTs: string(),
     bot: string(),
   }),
   payload: object({
+    ts: string(),
     user: string(),
     text: string(),
   }),
