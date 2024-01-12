@@ -103,3 +103,14 @@ export const createToolkit = ({
     toolDescriptions: renderTextDescription(tools),
   };
 };
+
+export const formatTextDecoration = (text: string): string => {
+  return text
+    .replaceAll(/\*\*(.+?)\*\*/g, ' *$1* ')
+    .replaceAll(/\*(.+?)\*/g, ' *$1* ')
+    .replaceAll(/_(.+?)_/g, ' _$1_ ')
+    .replaceAll(/~(.+?)~/g, ' ~$1~ ')
+    .replaceAll(/`(.+?)`/g, ' `$1` ')
+    .replaceAll(/<(.+?)>/g, ' <$1> ')
+    .replaceAll('¥¥¥', '```');
+};
