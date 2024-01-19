@@ -40,6 +40,7 @@ export const appMentionEventHandler = async (
     const toolkit = createToolkit({
       model,
       embeddings,
+      replies,
     });
 
     const prompt = await new PromptTemplate({

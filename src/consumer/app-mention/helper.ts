@@ -4,6 +4,7 @@ import { Calculator } from 'langchain/tools/calculator';
 import { renderTextDescription } from 'langchain/tools/render';
 import { SlackAPIClient } from 'slack-edge';
 
+import { RepliesSummary } from './tools/replies-summary';
 import { WebSummary } from './tools/web-summary';
 
 import type { AppMentionEvent } from './event';
@@ -88,12 +89,16 @@ export const createEmbeddings = (env: Env) => {
 
 export const createToolkit = ({
   model,
+  embeddings,
+  replies,
 }: {
   model: BaseLanguageModel;
   embeddings: Embeddings;
+  replies: Reply[];
 }) => {
   const tools: Tool[] = [
     new Calculator(),
+    new RepliesSummary({ model, embeddings, replies }),
     new WebSummary({ model }),
   ];
 
