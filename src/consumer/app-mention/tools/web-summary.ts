@@ -48,7 +48,7 @@ export interface WebSummaryParameters extends ToolParams {
 export class WebSummary extends Tool {
   public readonly name = 'web-summary';
 
-  public readonly description = 'Useful for summarizing web pages provided by the user. Input should be "ONE valid http URL including protocol".';
+  public readonly description = 'Useful for summarizing web pages provided by the user. Always use only URL provided directly by the user as input, and do not use self-generated URL. Also, input must be "ONE valid http URL including protocol".';
 
   private readonly model: BaseLanguageModel;
 
