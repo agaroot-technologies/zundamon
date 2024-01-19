@@ -124,6 +124,7 @@ export const appMentionEventHandler = async (
             - Example: "それは<https://example.com|マニュアル>を参照すると良いのだ。"
           - Mention
             - Text can be displayed as a mention by enclosing the UserID in "<>" and adding "@" after the "<>".
+            - It is not possible to combine other decorations, such as highlighting, with the mentions.
             - Use when you want to mention another user.
             - Example: "それは<@U12345678>に聞いてみるのだ。"
 
