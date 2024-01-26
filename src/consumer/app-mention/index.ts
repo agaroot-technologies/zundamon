@@ -6,9 +6,10 @@ import { PromptTemplate } from 'langchain/prompts';
 import { RunnableSequence } from 'langchain/schema/runnable';
 
 import {
+  createChatLlm,
   createEmbeddings,
-  createLlm,
   createSlackClient,
+  createSummaryLlm,
   createToolkit,
   formatTextDecoration,
   getReplies,
@@ -35,10 +36,11 @@ export const appMentionEventHandler = async (
   const replies = await getReplies(slackClient, message.body);
 
   try {
-    const model = createLlm(env);
+    const chatModel = createChatLlm(env);
+    const summaryModel = createSummaryLlm(env);
     const embeddings = createEmbeddings(env);
     const toolkit = createToolkit({
-      model,
+      model: summaryModel,
       embeddings,
       replies,
     });
@@ -186,7 +188,7 @@ export const appMentionEventHandler = async (
           agent_scratchpad: (input: RunInput) => formatLogToString(input.steps),
         },
         prompt,
-        model,
+        chatModel,
         new ReActSingleInputOutputParser({ toolNames: toolkit.toolNames }),
       ]),
     });

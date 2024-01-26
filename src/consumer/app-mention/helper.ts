@@ -63,7 +63,7 @@ export const repliesToHistory = (messages: Reply[]): string => {
   }, '');
 };
 
-export const createLlm = (env: Env) => {
+export const createChatLlm = (env: Env) => {
   return new ChatOpenAI({
     verbose: true,
     modelName: env.OPENAI_CHAT_MODEL_NAME,
@@ -74,6 +74,17 @@ export const createLlm = (env: Env) => {
     stop: [
       '\nObservation:',
     ],
+  });
+};
+
+export const createSummaryLlm = (env: Env) => {
+  return new ChatOpenAI({
+    verbose: true,
+    modelName: env.OPENAI_SUMMARY_MODEL_NAME,
+    openAIApiKey: env.OPENAI_API_KEY,
+    configuration: {
+      baseURL: env.OPENAI_BASE_URL,
+    },
   });
 };
 
