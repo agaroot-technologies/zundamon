@@ -130,3 +130,24 @@ export const formatTextDecoration = (text: string): string => {
     .replaceAll(/<(.+?)>/g, ' <$1> ')
     .replaceAll('¥¥¥', '```');
 };
+
+export const updateChat = async (
+  slackClient: SlackAPIClient,
+  context: AppMentionEvent['context'],
+  text: string,
+) => {
+  await slackClient.chat.update({
+    channel: context.channel,
+    ts: context.replyTs,
+    text: text,
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: text,
+        },
+      },
+    ],
+  });
+};

@@ -14,6 +14,7 @@ import {
   formatTextDecoration,
   getReplies,
   repliesToHistory,
+  updateChat,
 } from './helper';
 
 import type { AppMentionEvent } from './event';
@@ -201,28 +202,11 @@ export const appMentionEventHandler = async (
     });
 
     const text = formatTextDecoration(result['output'] as string);
-    await slackClient.chat.update({
-      channel: message.body.context.channel,
-      ts: message.body.context.replyTs,
-      text: text,
-      blocks: [
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: text,
-          },
-        },
-      ],
-    });
+    await updateChat(slackClient, message.body.context, text);
 
     message.ack();
   } catch (error) {
-    await slackClient.chat.update({
-      channel: message.body.context.channel,
-      ts: message.body.context.replyTs,
-      text: 'エラーが発生したっぽいのだ。。。',
-    });
+    await updateChat(slackClient, message.body.context, 'エラーが発生したっぽいのだ。。。');
 
     message.retry();
     throw error;
