@@ -4,13 +4,13 @@ import { PromptTemplate } from 'langchain/prompts';
 
 import type { BaseLanguageModel } from 'langchain/base_language';
 
-const prompt = new PromptTemplate({
+const combinePrompt = new PromptTemplate({
   template: dedent`
-    The following is a set of documents:
+    The following is set of summaries:
 
     {text}
 
-    Based on this list of docs, please identify the main themes.
+    Based on this list of summaries, please combine them into finally document.
     Also, provide up to five links from within that you think may be of interest.
     If there are links, provide them as a list under the heading "Relevant Links:".
 
@@ -21,11 +21,11 @@ const prompt = new PromptTemplate({
 
 const mapPrompt = new PromptTemplate({
   template: dedent`
-    The following is set of summaries:
+    The following is a set of documents:
 
     {text}
 
-    Take these and distill it into a final, consolidated summary of the main themes. 
+    Based on this list of docs, please provide a summary.
     Also, provide up to five links from within that you think may be of interest.
     If there are links, provide them as a list under the heading "Relevant Links:".
 
@@ -37,7 +37,7 @@ const mapPrompt = new PromptTemplate({
 export const createMapReduceSummarizationChain = (model: BaseLanguageModel) => {
   return loadSummarizationChain(model, {
     type: 'map_reduce',
-    combinePrompt: prompt,
+    combinePrompt: combinePrompt,
     combineMapPrompt: mapPrompt,
   });
 };
