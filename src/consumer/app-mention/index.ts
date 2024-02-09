@@ -2,12 +2,14 @@ import dedent from 'dedent';
 import { AgentExecutor } from 'langchain/agents';
 import { formatLogToString } from 'langchain/agents/format_scratchpad/log';
 import { ReActSingleInputOutputParser } from 'langchain/agents/react/output_parser';
+import { Document } from 'langchain/document';
 import { PromptTemplate } from 'langchain/prompts';
 import { RunnableSequence } from 'langchain/schema/runnable';
 
 import {
   createChatLlm,
   createEmbeddings,
+  createRepliesVectorStore,
   createSlackClient,
   createSummaryLlm,
   createToolkit,
@@ -40,6 +42,8 @@ export const appMentionEventHandler = async (
     const chatModel = createChatLlm(env);
     const summaryModel = createSummaryLlm(env);
     const embeddings = createEmbeddings(env);
+    const repliesStore = createRepliesVectorStore(env, embeddings);
+
     const toolkit = createToolkit({
       model: summaryModel,
       embeddings,
@@ -203,6 +207,16 @@ export const appMentionEventHandler = async (
 
     const text = formatTextDecoration(result['output'] as string);
     await updateChat(slackClient, message.body.context, text);
+
+    await repliesStore.addDocuments([
+      new Document({
+        pageContent: repliesToHistory([
+          ...replies.slice(-5),
+          { type: 'Human', userId: message.body.payload.user, content: message.body.payload.text },
+          { type: 'AI', userId: message.body.context.bot, content: text },
+        ]),
+      }),
+    ]);
 
     message.ack();
   } catch (error) {

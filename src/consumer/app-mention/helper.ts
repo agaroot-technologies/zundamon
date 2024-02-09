@@ -1,3 +1,4 @@
+import { CloudflareVectorizeStore } from '@langchain/cloudflare';
 import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { Calculator } from 'langchain/tools/calculator';
@@ -95,6 +96,12 @@ export const createEmbeddings = (env: Env) => {
     configuration: {
       baseURL: env.OPENAI_BASE_URL,
     },
+  });
+};
+
+export const createRepliesVectorStore = (env: Env, embeddings: Embeddings) => {
+  return new CloudflareVectorizeStore(embeddings, {
+    index: env.VECTORIZE_REPLIES,
   });
 };
 

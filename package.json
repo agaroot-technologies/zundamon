@@ -9,6 +9,7 @@
     }
   },
   "dependencies": {
+    "@langchain/cloudflare": "0.0.2",
     "@langchain/core": "0.1.25",
     "cheerio": "1.0.0-rc.12",
     "dedent": "1.5.1",

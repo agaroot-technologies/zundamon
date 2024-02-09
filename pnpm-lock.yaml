@@ -8,6 +8,9 @@ overrides:
   tsconfig-paths: 4.2.0
 
 dependencies:
+  '@langchain/cloudflare':
+    specifier: 0.0.2
+    version: 0.0.2
   '@langchain/core':
     specifier: 0.1.25
     version: 0.1.25
@@ -154,6 +157,10 @@ packages:
       chalk: 2.4.2
       js-tokens: 4.0.0
     dev: true
+
+  /@cloudflare/ai@1.0.50:
+    resolution: {integrity: sha512-lgTrP514G9VRXEhWWDQ80gTs5latLBzoc8ouJKOEKRw6SPtEjHHrMkPv+WOAsamBOnXCjdBV63MVE2VCJ6PE7Q==}
+    dev: false
 
   /@cloudflare/kv-asset-handler@0.2.0:
     resolution: {integrity: sha512-MVbXLbTcAotOPUj0pAMhVtJ+3/kFkwJqc5qNOleOZTv6QkZZABDMS21dSrSlVswEHwrpWC03e4fWytjqKvuE2A==}
@@ -510,6 +517,15 @@ packages:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
+
+  /@langchain/cloudflare@0.0.2:
+    resolution: {integrity: sha512-WIU7fUWmbfqqlqTGU+sp4eTlHAJj2Pmvl76KQwjwkkcUGJaVBxlFR0WMf/OztDhlkGhLX/Uei3ATyvsGjFgWpA==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@cloudflare/ai': 1.0.50
+      '@langchain/core': 0.1.25
+      uuid: 9.0.1
+    dev: false
 
   /@langchain/community@0.0.26:
     resolution: {integrity: sha512-E5/lltEkkRCxA9WQ/IpdTWUBj5gaCOYuf6r2MX4ZNTR5gfaZkHdLQWF1rew6uG3Z7XjRMMtIxxT9jS7me6sRRA==}
