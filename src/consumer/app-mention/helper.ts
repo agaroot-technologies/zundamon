@@ -5,6 +5,7 @@ import { Calculator } from 'langchain/tools/calculator';
 import { renderTextDescription } from 'langchain/tools/render';
 import { SlackAPIClient } from 'slack-edge';
 
+import { RepliesSearch } from './tools/replies-search';
 import { RepliesSummary } from './tools/replies-summary';
 import { WebSummary } from './tools/web-summary';
 
@@ -12,7 +13,8 @@ import type { AppMentionEvent } from './event';
 import type { Env } from '../../type/env';
 import type { BaseLanguageModel } from 'langchain/base_language';
 import type { Embeddings } from 'langchain/embeddings/base';
-import type { Tool } from 'langchain/tools';
+import type { StructuredTool } from 'langchain/tools';
+import type { VectorStore } from 'langchain/vectorstores/base';
 
 export const createSlackClient = (env: Env) => {
   return new SlackAPIClient(env.SLACK_BOT_TOKEN, {
@@ -108,14 +110,17 @@ export const createRepliesVectorStore = (env: Env, embeddings: Embeddings) => {
 export const createToolkit = ({
   model,
   embeddings,
+  repliesStore,
   replies,
 }: {
   model: BaseLanguageModel;
   embeddings: Embeddings;
+  repliesStore: VectorStore;
   replies: Reply[];
 }) => {
-  const tools: Tool[] = [
+  const tools: StructuredTool[] = [
     new Calculator(),
+    new RepliesSearch({ model, store: repliesStore }),
     new RepliesSummary({ model, embeddings, replies }),
     new WebSummary({ model }),
   ];

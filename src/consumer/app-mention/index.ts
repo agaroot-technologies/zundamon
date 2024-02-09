@@ -47,6 +47,7 @@ export const appMentionEventHandler = async (
     const toolkit = createToolkit({
       model: summaryModel,
       embeddings,
+      repliesStore,
       replies,
     });
 
