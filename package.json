@@ -9,30 +9,30 @@
     }
   },
   "dependencies": {
-    "@langchain/core": "0.0.7",
+    "@langchain/core": "0.1.25",
     "cheerio": "1.0.0-rc.12",
     "dedent": "1.5.1",
-    "langchain": "0.0.198",
-    "slack-edge": "0.8.2",
-    "slack-web-api-client": "0.7.3",
+    "langchain": "0.1.17",
+    "slack-edge": "0.10.1",
+    "slack-web-api-client": "0.8.0",
     "url-regex-safe": "4.0.0",
-    "valibot": "0.21.0"
+    "valibot": "0.28.1"
   },
   "devDependencies": {
-    "@agaroot/eslint-config-common": "2.1.6",
+    "@agaroot/eslint-config-common": "2.1.8",
     "@agaroot/eslint-config-jest": "2.1.1",
-    "@cloudflare/workers-types": "4.20231121.0",
-    "@tsconfig/strictest": "2.0.2",
+    "@cloudflare/workers-types": "4.20240208.0",
+    "@tsconfig/strictest": "2.0.3",
     "@types/url-regex-safe": "1.0.2",
-    "@typescript-eslint/eslint-plugin": "6.11.0",
-    "@typescript-eslint/parser": "6.11.0",
-    "eslint": "8.54.0",
+    "@typescript-eslint/eslint-plugin": "6.21.0",
+    "@typescript-eslint/parser": "6.21.0",
+    "eslint": "8.56.0",
     "eslint-import-resolver-typescript": "3.6.1",
-    "eslint-plugin-import": "2.29.0",
-    "eslint-plugin-jest": "27.6.0",
-    "eslint-plugin-unicorn": "49.0.0",
+    "eslint-plugin-import": "2.29.1",
+    "eslint-plugin-jest": "27.6.3",
+    "eslint-plugin-unicorn": "51.0.1",
     "eslint-plugin-unused-imports": "3.0.0",
-    "typescript": "5.3.2",
-    "wrangler": "3.17.1"
+    "typescript": "5.3.3",
+    "wrangler": "3.28.0"
   }
 }
