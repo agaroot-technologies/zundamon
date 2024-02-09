@@ -16,7 +16,7 @@ export interface WebSummaryParameters extends ToolParams {
 export class WebSummary extends Tool {
   public readonly name = 'web-summary';
 
-  public readonly description = 'Useful for summarizing web pages provided by the user. Always use only URL provided directly by the user as input, and do not use self-generated URL. Also, input must be "ONE valid http URL including protocol".';
+  public readonly description = 'Useful for summarizing web pages. Always use only URLs explicitly provided by the user for input. Also, input should be "ONE valid http URL including protocol".';
 
   private readonly model: BaseLanguageModel;
 
@@ -57,7 +57,7 @@ export class WebSummary extends Tool {
 
     const chain = createMapReduceSummarizationChain(this.model);
 
-    const result = await chain.call({
+    const result = await chain.invoke({
       input_documents: documents,
     }, runManager?.getChild());
 
