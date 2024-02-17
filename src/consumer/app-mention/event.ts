@@ -1,20 +1,18 @@
-import { literal, object, string } from 'valibot';
+import { z } from 'zod';
 
-import type { Input } from 'valibot';
-
-export const AppMentionEventSchema = object({
-  type: literal('app-mention'),
-  context: object({
-    channel: string(),
-    threadTs: string(),
-    replyTs: string(),
-    bot: string(),
+export const AppMentionEventSchema = z.object({
+  type: z.literal('app-mention'),
+  context: z.object({
+    channel: z.string(),
+    threadTs: z.string(),
+    replyTs: z.string(),
+    bot: z.string(),
   }),
-  payload: object({
-    ts: string(),
-    user: string(),
-    text: string(),
+  payload: z.object({
+    ts: z.string(),
+    user: z.string(),
+    text: z.string(),
   }),
 });
 
-export type AppMentionEvent = Input<typeof AppMentionEventSchema>;
+export type AppMentionEvent = z.infer<typeof AppMentionEventSchema>;

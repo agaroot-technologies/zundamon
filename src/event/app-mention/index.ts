@@ -1,5 +1,3 @@
-import { parse } from 'valibot';
-
 import { AppMentionEventSchema } from '../../consumer/app-mention/event';
 
 import type { Env } from '../../type/env';
@@ -15,7 +13,7 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
     thread_ts: payload.thread_ts || payload.ts,
   });
 
-  await env.QUEUE.send(parse(AppMentionEventSchema, {
+  await env.QUEUE.send(AppMentionEventSchema.parse( {
     type: 'app-mention',
     context: {
       channel: context.channelId,

@@ -12,8 +12,14 @@ dependencies:
     specifier: 0.0.2
     version: 0.0.2
   '@langchain/core':
-    specifier: 0.1.25
-    version: 0.1.25
+    specifier: 0.1.29
+    version: 0.1.29
+  '@langchain/langgraph':
+    specifier: 0.0.7
+    version: 0.0.7
+  '@tryfabric/mack':
+    specifier: 1.2.1
+    version: 1.2.1
   cheerio:
     specifier: 1.0.0-rc.12
     version: 1.0.0-rc.12
@@ -29,12 +35,9 @@ dependencies:
   slack-web-api-client:
     specifier: 0.8.0
     version: 0.8.0
-  url-regex-safe:
-    specifier: 4.0.0
-    version: 4.0.0
-  valibot:
-    specifier: 0.28.1
-    version: 0.28.1
+  zod:
+    specifier: 3.22.4
+    version: 3.22.4
 
 devDependencies:
   '@agaroot/eslint-config-common':
@@ -523,7 +526,7 @@ packages:
     engines: {node: '>=18'}
     dependencies:
       '@cloudflare/ai': 1.0.50
-      '@langchain/core': 0.1.25
+      '@langchain/core': 0.1.29
       uuid: 9.0.1
     dev: false
 
@@ -776,7 +779,7 @@ packages:
       ws:
         optional: true
     dependencies:
-      '@langchain/core': 0.1.25
+      '@langchain/core': 0.1.29
       '@langchain/openai': 0.0.14
       flat: 5.0.2
       langsmith: 0.0.68
@@ -786,15 +789,15 @@ packages:
       - encoding
     dev: false
 
-  /@langchain/core@0.1.25:
-    resolution: {integrity: sha512-iFlUXKl68WZ9BQLA70gwfJOgCrLWsb9DYjUSIFRjG0WI+VFMbRpJipfCi0i40EhuLTmyDfCrg+kvpE0yqQ+D5g==}
+  /@langchain/core@0.1.29:
+    resolution: {integrity: sha512-MVrrb2J1Y08Yy6JnRDy/C/yxZj2PvO6wNkMs8657Q345SHs8iCbRX7Dy7rC69isUrpMjR7PvADFxV9rGvdoMBg==}
     engines: {node: '>=18'}
     dependencies:
       ansi-styles: 5.2.0
       camelcase: 6.3.0
       decamelize: 1.2.0
       js-tiktoken: 1.0.8
-      langsmith: 0.0.48
+      langsmith: 0.1.3
       ml-distance: 4.0.1
       p-queue: 6.6.2
       p-retry: 4.6.2
@@ -803,11 +806,18 @@ packages:
       zod-to-json-schema: 3.22.4(zod@3.22.4)
     dev: false
 
+  /@langchain/langgraph@0.0.7:
+    resolution: {integrity: sha512-d3RdFwtwwA39CW3eq9ASblnL330y6dAXZXmw7anV4XWgb++a/Xj0i1UrVri+efUUoa23BROr/p/j3nvyH1jmLg==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@langchain/core': 0.1.29
+    dev: false
+
   /@langchain/openai@0.0.14:
     resolution: {integrity: sha512-co6nRylPrLGY/C3JYxhHt6cxLq07P086O7K3QaZH7SFFErIN9wSzJonpvhZR07DEUq6eK6wKgh2ORxA/NcjSRQ==}
     engines: {node: '>=18'}
     dependencies:
-      '@langchain/core': 0.1.25
+      '@langchain/core': 0.1.29
       js-tiktoken: 1.0.8
       openai: 4.27.0
       zod: 3.22.4
@@ -836,6 +846,19 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
     dev: true
+
+  /@slack/types@2.11.0:
+    resolution: {integrity: sha512-UlIrDWvuLaDly3QZhCPnwUSI/KYmV1N9LyhuH6EDKCRS1HWZhyTG3Ja46T3D0rYfqdltKYFXbJSSRPwZpwO0cQ==}
+    engines: {node: '>= 12.13.0', npm: '>= 6.12.0'}
+    dev: false
+
+  /@tryfabric/mack@1.2.1:
+    resolution: {integrity: sha512-qQKj3l4x/7fWPHyk3zO3hPK2NUTH8AINJnVbdBYforWpm+6RDzp22gFIE66BJd2z7EFmt7F9aUOyZTKwmxiXrA==}
+    dependencies:
+      '@slack/types': 2.11.0
+      fast-xml-parser: 4.3.4
+      marked: 4.3.0
+    dev: false
 
   /@tsconfig/strictest@2.0.3:
     resolution: {integrity: sha512-MroLvRhMbqtXI5WBSwoomro6OQS4xnCoudUrMb20JO0vLKUs0bAaCEcvM/immEBSJjFAK1l6jW1oAO8q3Ancrg==}
@@ -2066,6 +2089,13 @@ packages:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
     dev: true
 
+  /fast-xml-parser@4.3.4:
+    resolution: {integrity: sha512-utnwm92SyozgA3hhH2I8qldf2lBqm6qHOICawRNRFu1qMe3+oqr+GcXjGqTmXTMGE5T4eC03kr/rlh5C1IRdZA==}
+    hasBin: true
+    dependencies:
+      strnum: 1.0.5
+    dev: false
+
   /fastq@1.15.0:
     resolution: {integrity: sha512-wBrocU2LCXXa+lWBt8RoIRD89Fi8OdABODa/kEnyeyjS5aZO5/GNvI5sEINADqP/h8M29UHTHUb53sUu5Ihqdw==}
     dependencies:
@@ -2381,11 +2411,6 @@ packages:
       hasown: 2.0.0
       side-channel: 1.0.4
     dev: true
-
-  /ip-regex@4.3.0:
-    resolution: {integrity: sha512-B9ZWJxHHOHUhUjCPrMpLD4xEq35bUTClHM1S6CBU5ixQnkZmwipwgc96vAd7AAGM9TGHvJR+Uss+/Ak6UphK+Q==}
-    engines: {node: '>=8'}
-    dev: false
 
   /is-any-array@2.0.1:
     resolution: {integrity: sha512-UtilS7hLRu++wb/WBAw9bNuP1Eg04Ivn1vERJck8zJthEvXCBEBpGR/33u/xLKWEQf95803oalHrVDptcAvFdQ==}
@@ -2757,7 +2782,7 @@ packages:
     dependencies:
       '@anthropic-ai/sdk': 0.9.1
       '@langchain/community': 0.0.26
-      '@langchain/core': 0.1.25
+      '@langchain/core': 0.1.29
       '@langchain/openai': 0.0.14
       binary-extensions: 2.2.0
       cheerio: 1.0.0-rc.12
@@ -2838,8 +2863,8 @@ packages:
     resolution: {integrity: sha512-SW6105T+YP1cTe0yMf//7kyshCgvCTyFBMTgH2H3s9rTAR4e+78DA/BBrUL/Mt4Q5eMWui7iGuAYb3pgGsdQ9w==}
     dev: false
 
-  /langsmith@0.0.48:
-    resolution: {integrity: sha512-s0hW8iZ90Q9XLTnDK0Pgee245URV3b1cXQjPDj5OKm1+KN7iSK1pKx+4CO7RcFLz58Ixe7Mt+mVcomYqUuryxQ==}
+  /langsmith@0.0.68:
+    resolution: {integrity: sha512-bxaJndEhUFDfv5soWKxONrLMZaVZfS+G4smJl3WYQlsEph8ierG3QbJfx1PEwl40TD0aFBjzq62usUX1UOCjuA==}
     hasBin: true
     dependencies:
       '@types/uuid': 9.0.7
@@ -2849,8 +2874,8 @@ packages:
       uuid: 9.0.1
     dev: false
 
-  /langsmith@0.0.68:
-    resolution: {integrity: sha512-bxaJndEhUFDfv5soWKxONrLMZaVZfS+G4smJl3WYQlsEph8ierG3QbJfx1PEwl40TD0aFBjzq62usUX1UOCjuA==}
+  /langsmith@0.1.3:
+    resolution: {integrity: sha512-kQMS3QySeU0Qt9A71d9trUXbeKn33HfxpRc7hRjSB967zcdTAngh66NcqYqBflD3nOL4FK6LKmvfb3vbNDEoPg==}
     hasBin: true
     dependencies:
       '@types/uuid': 9.0.7
@@ -2902,6 +2927,12 @@ packages:
     dependencies:
       sourcemap-codec: 1.4.8
     dev: true
+
+  /marked@4.3.0:
+    resolution: {integrity: sha512-PRsaiG84bK+AMvxziE/lCFss8juXjNaWzVbN5tXAm4XjeaS9NAHhop+PjQxz2A9h8Q4M/xGmzP8vqNwy6JeK0A==}
+    engines: {node: '>= 12'}
+    hasBin: true
+    dev: false
 
   /md5@2.3.0:
     resolution: {integrity: sha512-T1GITYmFaKuO91vxyoQMFETst+O71VUPEU3ze5GNzDm0OWdP8v1ziTaAEPUr/3kLsY3Sftgz242A1SetQiDL7g==}
@@ -3632,6 +3663,10 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /strnum@1.0.5:
+    resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
+    dev: false
+
   /supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
     engines: {node: '>=4'}
@@ -3659,11 +3694,6 @@ packages:
   /text-table@0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
     dev: true
-
-  /tlds@1.247.0:
-    resolution: {integrity: sha512-m9G0j6euzOucY3Auzl2/SAnGXJVFA1ibJDRBqUdAx7o4jzMidCCKZXWNQVBDcx5zHISJl1r5yA8aaS6WfWuKMQ==}
-    hasBin: true
-    dev: false
 
   /to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
@@ -3814,26 +3844,9 @@ packages:
       punycode: 2.3.1
     dev: true
 
-  /url-regex-safe@4.0.0:
-    resolution: {integrity: sha512-BrnFCWKNFrFnRzKD66NtJqQepfJrUHNPvPxE5y5NSAhXBb4OlobQjt7907Jm4ItPiXaeX+dDWMkcnOd4jR9N8A==}
-    engines: {node: '>= 14'}
-    peerDependencies:
-      re2: ^1.20.1
-    peerDependenciesMeta:
-      re2:
-        optional: true
-    dependencies:
-      ip-regex: 4.3.0
-      tlds: 1.247.0
-    dev: false
-
   /uuid@9.0.1:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
     hasBin: true
-    dev: false
-
-  /valibot@0.28.1:
-    resolution: {integrity: sha512-zQnjwNJuXk6362Leu0+4eFa/SMwRom3/hEvH6s1EGf3oXIPbo2WFKDra9ymnbVh3clLRvd8hw4sKF5ruI2Lyvw==}
     dev: false
 
   /validate-npm-package-license@3.0.4:

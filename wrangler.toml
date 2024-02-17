@@ -12,6 +12,6 @@ max_batch_size = 1
 max_retries = 3
 
 [[vectorize]]
-binding = "VECTORIZE_REPLIES"
-index_name = "zundamon-replies"
+binding = "VECTORIZE_CONVERSATION"
+index_name = "zundamon-conversation"
 

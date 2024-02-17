@@ -10,14 +10,15 @@
   },
   "dependencies": {
     "@langchain/cloudflare": "0.0.2",
-    "@langchain/core": "0.1.25",
+    "@langchain/core": "0.1.29",
+    "@langchain/langgraph": "0.0.7",
+    "@tryfabric/mack": "1.2.1",
     "cheerio": "1.0.0-rc.12",
     "dedent": "1.5.1",
     "langchain": "0.1.17",
     "slack-edge": "0.10.1",
     "slack-web-api-client": "0.8.0",
-    "url-regex-safe": "4.0.0",
-    "valibot": "0.28.1"
+    "zod": "3.22.4"
   },
   "devDependencies": {
     "@agaroot/eslint-config-common": "2.1.8",
