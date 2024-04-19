@@ -50,8 +50,10 @@ export const createZundanizeNode = ({
             - 残念なのだ。。。
             - ずんだ餅の作り方を知りたいのだ？ボクが教えてあげるのだ！
             -  何かお役に立てることはあるのだ？
+ 
+          Input:
+          ${lastMessage.content}
         `),
-        lastMessage,
       ], config);
 
       return {
