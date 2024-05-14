@@ -1,3 +1,5 @@
+import { Buffer } from 'node:buffer';
+
 import { markdownToBlocks } from '@tryfabric/mack';
 
 import { createGraph } from './graph';
@@ -41,6 +43,16 @@ export const appMentionEventHandler = async (
         botUserId: message.body.context.bot,
         replyUserId: message.body.payload.user,
         replyUserText: message.body.payload.text,
+        images: await Promise.all(message.body.payload.images.map(async image => {
+          const response = await fetch(image.url, {
+            headers: {
+              Authorization: `Bearer ${message.body.context.token}`,
+            },
+          });
+          const buffer = await response.arrayBuffer();
+          const base64 = Buffer.from(buffer).toString('base64');
+          return `data:${image.mimetype};base64,${base64}`;
+        })),
       },
     });
 

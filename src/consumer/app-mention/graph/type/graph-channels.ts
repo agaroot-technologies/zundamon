@@ -5,6 +5,7 @@ export type GraphChannels = {
     botUserId: string;
     replyUserId: string;
     replyUserText: string;
+    images: string[];
   };
   messages: BaseMessage[];
 };

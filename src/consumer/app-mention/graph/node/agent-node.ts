@@ -1,4 +1,4 @@
-import { SystemMessage } from '@langchain/core/messages';
+import { SystemMessage, HumanMessage } from '@langchain/core/messages';
 import { convertToOpenAIFunction } from '@langchain/core/utils/function_calling';
 import dedent from 'dedent';
 
@@ -46,6 +46,15 @@ export const createAgentNode = ({
           Human [UserId: ${context.replyUserId}]
           ${context.replyUserText}
         `),
+        ...(context.images.length ? [new HumanMessage({
+          content: context.images.map(base64 => ({
+            type: 'image_url',
+            image_url: {
+              url: base64,
+              detail: 'high',
+            },
+          })),
+        })] : []),
         ...messages,
       ], config);
 

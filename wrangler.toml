@@ -1,6 +1,7 @@
 name = "zundamon"
 main = "src/index.ts"
 compatibility_date = "2023-11-24"
+compatibility_flags = ["nodejs_compat"]
 
 [[queues.producers]]
 queue = "zundamon"

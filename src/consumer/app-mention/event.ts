@@ -7,11 +7,16 @@ export const AppMentionEventSchema = z.object({
     threadTs: z.string(),
     replyTs: z.string(),
     bot: z.string(),
+    token: z.string(),
   }),
   payload: z.object({
     ts: z.string(),
     user: z.string(),
     text: z.string(),
+    images: z.array(z.object({
+      mimetype: z.string(),
+      url: z.string(),
+    })),
   }),
 });
 
