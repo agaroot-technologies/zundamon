@@ -8,6 +8,8 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
   context,
   payload,
 }) => {
+  if (payload.edited) return;
+
   const response = await context.say({
     text: '考え中なのだ。',
     thread_ts: payload.thread_ts || payload.ts,
