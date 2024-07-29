@@ -16,13 +16,13 @@ export const appMentionHandler: EventLazyHandler<'app_mention', Env> = async ({
   });
 
   const images = payload.files
-    ?.filter(file => file.mimetype.startsWith('image'))
-    .map(file => ({
+    ?.filter((file) => file.mimetype.startsWith('image'))
+    .map((file) => ({
       mimetype: file.mimetype,
       url: file.url_private_download,
     })) ?? [];
 
-  await env.QUEUE.send(AppMentionEventSchema.parse( {
+  await env.QUEUE.send(AppMentionEventSchema.parse({
     type: 'app-mention',
     context: {
       channel: context.channelId,

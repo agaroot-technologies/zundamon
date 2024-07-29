@@ -17,13 +17,13 @@ export const getReplies = async (
   }
 
   return replies.messages
-    .filter(message => {
+    .filter((message) => {
       return !(
-        message.ts === event.context.replyTs ||
-        message.ts === event.payload.ts
+        message.ts === event.context.replyTs
+        || message.ts === event.payload.ts
       );
     })
-    .map(message => {
+    .map((message) => {
       return {
         type: message.user === event.context.bot ? 'AI' : 'Human',
         userId: message.user ?? '',

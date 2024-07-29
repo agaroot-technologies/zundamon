@@ -29,7 +29,7 @@ export const createThreadSummaryTool = ({
     query: z.string().nullish().describe('What you want to find in the thread.'),
   }),
   func: async ({ query }, runManager) => {
-    let documents = replies.map(reply => new Document({
+    let documents = replies.map((reply) => new Document({
       pageContent: reply.content,
     }));
 

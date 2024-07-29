@@ -2,12 +2,7 @@
   "name": "zundamon",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@8.10.5",
-  "pnpm": {
-    "overrides": {
-      "tsconfig-paths": "4.2.0"
-    }
-  },
+  "type": "module",
   "dependencies": {
     "@langchain/cloudflare": "0.0.2",
     "@langchain/core": "0.1.29",
@@ -21,20 +16,22 @@
     "zod": "3.22.4"
   },
   "devDependencies": {
-    "@agaroot/eslint-config-common": "2.1.8",
-    "@agaroot/eslint-config-jest": "2.1.1",
+    "@agaroot/eslint-config-common": "3.0.5",
+    "@agaroot/eslint-config-definer": "1.0.5",
+    "@agaroot/eslint-config-javascript": "2.0.5",
+    "@agaroot/eslint-config-style": "2.0.5",
+    "@agaroot/eslint-config-typescript": "2.0.5",
     "@cloudflare/workers-types": "4.20240208.0",
     "@tsconfig/strictest": "2.0.3",
     "@types/url-regex-safe": "1.0.2",
-    "@typescript-eslint/eslint-plugin": "6.21.0",
-    "@typescript-eslint/parser": "6.21.0",
     "eslint": "8.56.0",
-    "eslint-import-resolver-typescript": "3.6.1",
-    "eslint-plugin-import": "2.29.1",
-    "eslint-plugin-jest": "27.6.3",
-    "eslint-plugin-unicorn": "51.0.1",
-    "eslint-plugin-unused-imports": "3.0.0",
     "typescript": "5.3.3",
     "wrangler": "3.28.0"
+  },
+  "packageManager": "pnpm@8.10.5",
+  "pnpm": {
+    "overrides": {
+      "tsconfig-paths": "4.2.0"
+    }
   }
 }

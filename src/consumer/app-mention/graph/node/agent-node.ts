@@ -21,7 +21,7 @@ export const createAgentNode = ({
   replies,
 }: CreateAgentNodeParameters): GraphNode => {
   const model = chatModel.bind({
-    functions: tools.map(tool => convertToOpenAIFunction(tool)),
+    functions: tools.map((tool) => convertToOpenAIFunction(tool)),
   });
 
   return {
@@ -46,15 +46,17 @@ export const createAgentNode = ({
           Human [UserId: ${context.replyUserId}]
           ${context.replyUserText}
         `),
-        ...(context.images.length ? [new HumanMessage({
-          content: context.images.map(base64 => ({
-            type: 'image_url',
-            image_url: {
-              url: base64,
-              detail: 'high',
-            },
-          })),
-        })] : []),
+        ...(context.images.length
+          ? [new HumanMessage({
+              content: context.images.map((base64) => ({
+                type: 'image_url',
+                image_url: {
+                  url: base64,
+                  detail: 'high',
+                },
+              })),
+            })]
+          : []),
         ...messages,
       ], config);
 
